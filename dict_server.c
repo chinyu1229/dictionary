@@ -152,7 +152,7 @@ void do_register(int acceptfd, MSG *msg,sqlite3 *db)
 {
 	char * errmsg;
 	char sql[128];
-	sprintf(sql, "insert into usr values('%s',%s);",msg->name, msg->data);
+	sprintf(sql, "insert into usr values('%s','%s');",msg->name, msg->data);
 	printf("%s\n",sql);
 	if(sqlite3_exec(db,sql,NULL,NULL, &errmsg) != SQLITE_OK)
 	{

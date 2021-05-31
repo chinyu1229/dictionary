@@ -6,6 +6,7 @@
 #include<arpa/inet.h>
 #include<string.h>
 #include<unistd.h>
+#include<openssl/md5.h>
 
 #define  N 32
 
@@ -30,6 +31,23 @@ int do_register(int sockfd, MSG *msg)
 
 	printf("Input passwd:");
 	scanf("%s",msg->data);
+	MD5_CTX ctx;
+    unsigned char md[16];
+    char buf[33]={'/0'};
+    char tmp[3]={'/0'};
+    int i;
+ 
+    MD5_Init(&ctx);
+    MD5_Update(&ctx,(unsigned char *)msg->data,strlen(msg->data));
+    MD5_Final(md,&ctx);
+ 
+    for( i=0; i<16; i++ ){
+        sprintf(tmp,"%02X",md[i]);
+        strcat(buf,tmp);
+    }
+
+	strcpy(msg->data,buf);
+
 	if(send(sockfd, msg, sizeof(MSG), 0) < 0)
 	{
 		printf("fail to send.\n");
@@ -54,6 +72,23 @@ int do_login(int sockfd, MSG *msg)
 
 	printf("Input passwd:");
 	scanf("%s",msg->data);
+
+	MD5_CTX ctx;
+    unsigned char md[16];
+    char buf[33]={'/0'};
+    char tmp[3]={'/0'};
+    int i;
+ 
+    MD5_Init(&ctx);
+    MD5_Update(&ctx,(unsigned char *)msg->data,strlen(msg->data));
+    MD5_Final(md,&ctx);
+ 
+    for( i=0; i<16; i++ ){
+        sprintf(tmp,"%02X",md[i]);
+        strcat(buf,tmp);
+    }
+	
+	strcpy(msg->data, buf);
 
 	if(send(sockfd, msg, sizeof(MSG), 0) < 0)
 	{
